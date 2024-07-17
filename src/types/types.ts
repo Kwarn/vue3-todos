@@ -1,8 +1,8 @@
 export type Task = {
-  id: number
+  id: string
   todo: string
   completed: boolean
-  userId: number
+  userId: string
 }
 
 export type Tasks = {

@@ -1,39 +1,48 @@
 <template>
-  <div class="mx-auto p-4 flex flex-row justify-evenly">
+  <div class="mx-auto p-4 flex justify-evenly">
     <LoadingIndicator v-if="isLoading" />
-    <div v-else class="flex flex-row justify-evenly w-full">
-      <div class="tasks-list">
-        <h3>Pending Tasks</h3>
-        <TasksList listType="pending" :tasks="tasks.pending" @update:tasks="toggleStatus" />
+    <div v-else class="flex justify-evenly w-full flex-col md:flex-row">
+      <TaskForm @add-task="onFormSubmitCreate" @update-task="onFormSubmitUpdate" />
+      <div class="tasks-list flex justify-center flex-col">
+        <h3 class="m-auto">Todo</h3>
+        <TasksList listType="pending" @update:tasks="toggleStatus" />
       </div>
 
       <div class="tasks-list">
-        <h3>Completed Tasks</h3>
-        <TasksList listType="completed" :tasks="tasks.completed" @update:tasks="toggleStatus" />
+        <h3>Completed</h3>
+        <TasksList listType="completed" @update:tasks="toggleStatus" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
-import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import type { Task, TaskStatus } from '@/types/types'
 import { useTaskStore } from '@/stores/tasks'
+import { onMounted, ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import TasksList from '@/components/TasksList.vue'
+import TaskForm from '@/components/TaskForm.vue'
+import { v4 as uuid } from 'uuid'
 
-const tasksStore = useTaskStore()
-const { addTasks, updateTasks } = tasksStore
-const { tasks } = storeToRefs(tasksStore)
-const isLoading = ref<boolean>(false)
+const taskStore = useTaskStore()
+const { addTask, addTasks, updateTasks, updateTask } = taskStore
+const { tasks } = storeToRefs(taskStore)
+const isLoading = ref<boolean>(true)
 
 onMounted(async () => {
+  // prevent fetching initial tasks if persisted pinia store already has tasks
+  if (tasks.value.pending.length || tasks.value.completed.length) {
+    isLoading.value = false
+    return
+  }
   try {
-    isLoading.value = true
     const res = await fetch('https://dummyjson.com/todos?limit=5')
     const { todos } = await res.json()
-    addTasks(todos as Task[])
+    // switching int id to uuid to avoid random conflicts when creating new tasks
+    const newTasks = todos.map((task: Task) => ({ ...task, id: uuid(), userId: uuid() }))
+    addTasks(newTasks as Task[])
     isLoading.value = false
   } catch (error) {
     console.error(error)
@@ -41,20 +50,26 @@ onMounted(async () => {
   }
 })
 
-function toggleStatus({ updatedTasks, status }: { updatedTasks: Task[]; status: TaskStatus }) {
+function toggleStatus({ status, updatedTasks }: { status: TaskStatus; updatedTasks: Task[] }) {
   updateTasks(status, updatedTasks)
 }
 
-watch(
-  () => tasks,
-  (newTasks: any) => {
-    console.log(newTasks)
-  }
-)
+function onFormSubmitCreate(newTask: Partial<Task>) {
+  addTask({
+    id: uuid(),
+    userId: uuid(),
+    todo: newTask?.todo ?? '',
+    completed: newTask.completed ?? false
+  })
+}
+
+function onFormSubmitUpdate(updatedTask: Task) {
+  updateTask(updatedTask)
+}
 </script>
 
 <style scoped>
 .tasks-list {
-  @apply w-full m-4;
+  @apply w-full md:m-4;
 }
 </style>
