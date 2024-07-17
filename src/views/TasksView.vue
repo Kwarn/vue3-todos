@@ -6,7 +6,7 @@
         <TaskForm @add-task="onFormSubmitCreate" @update-task="onFormSubmitUpdate" />
       </div>
 
-      <p class="m-auto mt-0">* drag and drop tasks</p>
+      <p class="m-auto mt-0">* drag and drop tasks or use tab, enter & arrows.</p>
 
       <div class="flex justify-between flex-col md:flex-row">
         <div class="tasks-list flex justify-center flex-col">
