@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'w-full h-full min-h-[200px] flex flex-col items-center justify-center border rounded-lg shadow-md z-10',
+      'w-full h-full min-h-[200px] flex flex-col items-center justify-center border rounded-lg shadow-md',
       { 'bg-green-100': isDragging }
     ]"
   >
@@ -14,13 +14,20 @@
       @dragover="setIsDraggingTrue"
       @dragleave="setIsDraggingFalse"
       @drop="setIsDraggingFalse"
+      @end="handleDragEnd"
     >
       <template #item="{ element: task, index }">
         <li
           :id="'list-item-' + task.id"
+          :aria-label="'Task ' + (index + 1)"
           @mouseover="hoveredTaskIndex = index"
           @mouseleave="hoveredTaskIndex = null"
+          @click="handleItemClick(index)"
+          @keydown.enter.prevent="handleItemClick(index)"
+          @keydown.escape="hoveredTaskIndex = null"
+          @keydown="handleKeyDown(index, $event)"
           class="flex justify-between p-4 border rounded-lg shadow-md w-full relative"
+          tabindex="0"
         >
           <p class="flex-1">{{ task.todo }}</p>
           <div :class="task.completed ? 'text-green-500' : 'text-red-500'">
@@ -33,16 +40,20 @@
             <button
               id="edit-button"
               @click="editTask(task)"
+              @keydown.enter.prevent="editTask(task)"
               class="text-blue-500 mr-2 hover:bg-green-200 flex items-center"
             >
               <i class="fas fa-pencil-alt"></i>
+              <span class="sr-only">Edit task</span>
             </button>
             <button
               id="delete-button"
               @click="deleteTask(task.id)"
+              @keydown.enter.prevent="deleteTask(task.id)"
               class="text-red-500 hover:bg-red-200 flex items-center"
             >
               <i class="fas fa-trash-alt"></i>
+              <span class="sr-only">Delete task</span>
             </button>
           </div>
         </li>
@@ -75,12 +86,15 @@ let isDragging = ref<boolean>(false)
 let hoveredTaskIndex = ref<number | null>(null)
 
 function setIsDraggingTrue() {
-  console.log('isDragging', isDragging)
   isDragging.value = true
 }
 
 function setIsDraggingFalse() {
   isDragging.value = false
+}
+
+function handleDragEnd() {
+  hoveredTaskIndex.value = null
 }
 
 function editTask(task: Task) {
@@ -92,8 +106,51 @@ function deleteTask(taskId: string) {
   taskStore.setEditingTask(null)
 }
 
+function handleItemClick(index: number) {
+  hoveredTaskIndex.value = hoveredTaskIndex.value === index ? null : index
+}
+
 function onTasksChange() {
   emit('update:tasks', { status: props.listType, updatedTasks: localTasks.value })
+}
+
+function handleKeyDown(index: number, event: KeyboardEvent) {
+  switch (event.key) {
+    case 'ArrowUp':
+      moveItemUp(index)
+      break
+    case 'ArrowDown':
+      moveItemDown(index)
+      break
+    case 'ArrowLeft':
+      moveItemToList(localTasks.value[index].id, 'pending')
+      break
+    case 'ArrowRight':
+      moveItemToList(localTasks.value[index].id, 'completed')
+      break
+  }
+}
+
+function moveItemUp(index: number) {
+  if (index > 0) {
+    const movedTask = localTasks.value.splice(index, 1)[0]
+    localTasks.value.splice(index - 1, 0, movedTask)
+    onTasksChange()
+  }
+}
+
+function moveItemDown(index: number) {
+  if (index < localTasks.value.length - 1) {
+    const movedTask = localTasks.value.splice(index, 1)[0]
+    localTasks.value.splice(index + 1, 0, movedTask)
+    onTasksChange()
+  }
+}
+
+function moveItemToList(taskId: string, targetList: TaskStatus) {
+  if (props.listType !== targetList) {
+    taskStore.moveTaskToList(props.listType, targetList, taskId)
+  }
 }
 
 watch(

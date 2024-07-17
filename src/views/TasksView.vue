@@ -1,16 +1,23 @@
 <template>
   <div class="mx-auto p-4 flex justify-evenly">
     <LoadingIndicator v-if="isLoading" />
-    <div v-else class="flex justify-evenly w-full flex-col md:flex-row">
-      <TaskForm @add-task="onFormSubmitCreate" @update-task="onFormSubmitUpdate" />
-      <div class="tasks-list flex justify-center flex-col">
-        <h3 class="m-auto">Todo</h3>
-        <TasksList listType="pending" @update:tasks="toggleStatus" />
+    <div v-else class="flex justify-evenly flex-col w-full">
+      <div>
+        <TaskForm @add-task="onFormSubmitCreate" @update-task="onFormSubmitUpdate" />
       </div>
 
-      <div class="tasks-list">
-        <h3>Completed</h3>
-        <TasksList listType="completed" @update:tasks="toggleStatus" />
+      <p class="m-auto mt-0">* drag and drop tasks</p>
+
+      <div class="flex justify-between flex-col md:flex-row">
+        <div class="tasks-list flex justify-center flex-col">
+          <h3 class="m-auto my-2">Todo</h3>
+          <TasksList listType="pending" @update:tasks="toggleStatus" />
+        </div>
+
+        <div class="tasks-list flex justify-center flex-col">
+          <h3 class="m-auto my-2">Completed</h3>
+          <TasksList listType="completed" @update:tasks="toggleStatus" />
+        </div>
       </div>
     </div>
   </div>
@@ -25,6 +32,14 @@ import LoadingIndicator from '@/components/LoadingIndicator.vue'
 import TasksList from '@/components/TasksList.vue'
 import TaskForm from '@/components/TaskForm.vue'
 import { v4 as uuid } from 'uuid'
+
+/* 
+  Hello :)
+    dummyjson.com mocks mutation requests (POST/PATCH/DELETE) we can't use it to actually update tasks.
+    I've opted to use dummyjson.com to fetch initial tasks and then manage them locally with a persisted pinia store.
+    the alternative would be to make the dummy requests and use the response to update the local store.
+    if this is what was intended I am happy to make the changes.
+*/
 
 const taskStore = useTaskStore()
 const { addTask, addTasks, updateTasks, updateTask } = taskStore

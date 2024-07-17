@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-1/2 h-[400px] mx-auto my-10 p-6 bg-white border border-gray-200 rounded-lg shadow-md"
+    class="h-fit mx-auto my-10 p-6 bg-white border border-gray-200 rounded-lg shadow-md sm:w-[400px]"
   >
     <form @submit.prevent="onSubmit" class="space-y-4 h-full">
       <div class="form-group">
@@ -9,27 +9,32 @@
           id="todo"
           v-model="taskForm.todo"
           required
-          class="flex max-h-[150px] min-h-[50px] mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          aria-required="true"
+          class="flex max-h-[150px] min-h-[50px] w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
         ></textarea>
       </div>
       <div class="form-group flex items-center">
-        <label for="completed" class="mr-2 text-sm font-medium text-gray-700">Completed</label>
+        <label for="completed" class="mr-2 text-sm font-medium text-gray-700">
+          <span>Completed</span>
+        </label>
         <input
           type="checkbox"
           id="completed"
           v-model="taskForm.completed"
+          aria-labelledby="completed-label"
           class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
         />
       </div>
       <button
         type="submit"
-        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md hover:col focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
       >
         {{ isEdit ? 'Update Task' : 'Add Task' }}
       </button>
       <button
+        type="button"
         @click="resetForm"
-        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md hover:col focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
       >
         Reset
       </button>

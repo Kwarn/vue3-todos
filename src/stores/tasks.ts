@@ -46,6 +46,15 @@ export const useTaskStore = defineStore(
       }
     }
 
+    function moveTaskToList(from: TaskStatus, to: TaskStatus, taskId: string) {
+      const taskIndex = tasks.value[from].findIndex((task) => task.id === taskId)
+      if (taskIndex !== -1) {
+        const task = tasks.value[from].splice(taskIndex, 1)[0]
+        task.completed = to === 'completed'
+        tasks.value[to].push(task)
+      }
+    }
+
     function setEditingTask(task: Task | null) {
       editingTask.value = task
     }
@@ -69,7 +78,8 @@ export const useTaskStore = defineStore(
       updateTasks,
       updateTask,
       setEditingTask,
-      deleteTask
+      deleteTask,
+      moveTaskToList
     }
   },
   {
