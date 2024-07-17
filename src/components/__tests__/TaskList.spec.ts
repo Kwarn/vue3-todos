@@ -4,11 +4,7 @@ import TaskList from '@/components/TasksList.vue'
 import { useTaskStore } from '@/stores/tasks'
 import { createPinia, setActivePinia } from 'pinia'
 
-// there are some typescript errors in this file due to .ts files not being able to infer types of .vue files when accessing wrapper.vm
-// I have tried a few things to fix this, I have decided to timebox this as I have multiple technical tests to complete in parallel
-// https://github.com/vuejs/vue-test-utils/issues/255
-
-// I have left a couple commented out broken tests cases for the same reasons as above, I thought it's better to leave them in so you can atleast see what I was trying to do. :)
+// see README.md for explanation of why I have commented out some tests
 
 describe('TaskList.vue', () => {
   beforeEach(() => {

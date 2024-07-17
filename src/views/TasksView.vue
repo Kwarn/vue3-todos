@@ -33,14 +33,6 @@ import TasksList from '@/components/TasksList.vue'
 import TaskForm from '@/components/TaskForm.vue'
 import { v4 as uuid } from 'uuid'
 
-/* 
-  Hello :)
-    dummyjson.com mocks mutation requests (POST/PATCH/DELETE) we can't use it to actually update tasks.
-    I've opted to use dummyjson.com to fetch initial tasks and then manage them locally with a persisted pinia store.
-    the alternative would be to make the dummy requests and use the response to update the local store.
-    if this is what was intended I am happy to make the changes.
-*/
-
 const taskStore = useTaskStore()
 const { addTask, addTasks, updateTasks, updateTask } = taskStore
 const { tasks } = storeToRefs(taskStore)
