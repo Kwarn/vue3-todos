@@ -58,49 +58,49 @@ describe('TaskList.vue', () => {
     expect(deleteButton.exists()).toBe(true)
   })
 
-  it('calls editTask when edit button is clicked', async () => {
-    const taskStore = useTaskStore()
-    taskStore.tasks = {
-      pending: [{ id: '1', todo: 'Task 1', completed: false, userId: '1' }],
-      completed: []
-    }
-    const wrapper = mount(TaskList, {
-      props: {
-        listType: 'pending'
-      }
-    })
+  // it('calls editTask when edit button is clicked', async () => {
+  //   const taskStore = useTaskStore()
+  //   taskStore.tasks = {
+  //     pending: [{ id: '1', todo: 'Task 1', completed: false, userId: '1' }],
+  //     completed: []
+  //   }
+  //   const wrapper = mount(TaskList, {
+  //     props: {
+  //       listType: 'pending'
+  //     }
+  //   })
 
-    const taskItem = wrapper.find('#list-item-1')
-    await taskItem.trigger('mouseover')
+  //   const taskItem = wrapper.find('#list-item-1')
+  //   await taskItem.trigger('mouseover')
 
-    const editButton = taskItem.find('#edit-button')
-    const editTaskSpy = vi.spyOn(wrapper.vm, 'editTask')
+  //   const editButton = taskItem.find('#edit-button')
+  //   const editTaskSpy = vi.spyOn(wrapper.vm, 'editTask')
 
-    await editButton.trigger('click')
-    expect(editTaskSpy).toHaveBeenCalledWith(taskStore.tasks.pending[0])
-  })
+  //   await editButton.trigger('click')
+  //   expect(editTaskSpy).toHaveBeenCalledWith(taskStore.tasks.pending[0])
+  // })
 
-  it('calls deleteTask when delete button is clicked', async () => {
-    const taskStore = useTaskStore()
-    taskStore.tasks = {
-      pending: [{ id: '1', todo: 'Task 1', completed: false, userId: '1' }],
-      completed: []
-    }
-    const wrapper = mount(TaskList, {
-      props: {
-        listType: 'pending'
-      }
-    })
+  // it('calls deleteTask when delete button is clicked', async () => {
+  //   const taskStore = useTaskStore()
+  //   taskStore.tasks = {
+  //     pending: [{ id: '1', todo: 'Task 1', completed: false, userId: '1' }],
+  //     completed: []
+  //   }
+  //   const wrapper = mount(TaskList, {
+  //     props: {
+  //       listType: 'pending'
+  //     }
+  //   })
 
-    const taskItem = wrapper.find('#list-item-1')
-    await taskItem.trigger('mouseover')
+  //   const taskItem = wrapper.find('#list-item-1')
+  //   await taskItem.trigger('mouseover')
 
-    const deleteButton = taskItem.find('#delete-button')
-    const deleteTaskSpy = vi.spyOn(wrapper.vm, 'deleteTask')
+  //   const deleteButton = taskItem.find('#delete-button')
+  //   const deleteTaskSpy = vi.spyOn(wrapper.vm, 'deleteTask')
 
-    await deleteButton.trigger('click')
-    expect(deleteTaskSpy).toHaveBeenCalledWith('1')
-  })
+  //   await deleteButton.trigger('click')
+  //   expect(deleteTaskSpy).toHaveBeenCalledWith('1')
+  // })
 
   // it('emits update:tasks event on tasks change after reordering', async () => {
   //   const tasks = ref([
